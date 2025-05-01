@@ -13,7 +13,6 @@ RUN apt-get update && apt-get install -y \
     libonig-dev \
     libxml2-dev \
     libzip-dev \
-    # Node.js and npm dependencies
     ca-certificates \
     gnupg \
     && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
@@ -27,3 +26,12 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Set working directory
 WORKDIR /var/www
+
+# Copy entrypoint script
+COPY ./src/start.sh /usr/local/bin/start.sh
+
+# Ensure it has correct line endings (important on Windows!)
+RUN chmod +x /usr/local/bin/start.sh && sed -i 's/\r$//' /usr/local/bin/start.sh
+
+# Set default command to run the script
+CMD ["start.sh"]
